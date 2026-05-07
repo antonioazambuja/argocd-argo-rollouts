@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: rollouts-demo
 spec:
-  replicas: 7
+  replicas: 8
   strategy:
     canary:
       steps:
