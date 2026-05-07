@@ -4,7 +4,6 @@ metadata:
   labels:
     serviceName: rollouts-demo
   name: rollouts-demo
-  namespace: default
 spec:
   generators:
   - clusters:
@@ -28,9 +27,6 @@ spec:
         serviceName: rollouts-demo
       name: rollouts-demo-{{ .name | sha256sum | trunc 5 }}
     spec:
-      destination:
-        name: '{{ .name }}'
-        namespace: automation-test-01
       ignoreDifferences:
       - group: '*'
         kind: '*'
@@ -40,11 +36,15 @@ spec:
         jsonPointers:
         - /spec/replicas
         kind: Rollout
-      project: deployment
+      project: default
+      destination:
+        name: '{{ .name }}'
+        namespace: default
       sources:
       - ref: values
-        repoURL: https://github.dev/antonioazambuja/argocd-argo-rollouts.git
+        repoURL: https://github.com/antonioazambuja/argocd-argo-rollouts.git
         targetRevision: main
+        path: values/
       syncPolicy:
         syncOptions:
         - ApplyOutOfSyncOnly=false
