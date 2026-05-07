@@ -46,6 +46,8 @@ spec:
         targetRevision: main
         path: values/
       syncPolicy:
+        automated:
+          enabled: true
         syncOptions:
         - ApplyOutOfSyncOnly=false
         - ServerSideApply=true
