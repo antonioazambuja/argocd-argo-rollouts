@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  labels:
+    serviceName: rollouts-demo
+  name: rollouts-demo
+  namespace: default
+spec:
+  generators:
+  - clusters:
+      selector:
+        matchExpressions:
+        - key: cluster-name
+          operator: In
+          values:
+          - in-cluster
+  goTemplate: true
+  goTemplateOptions:
+  - missingkey=error
+  template:
+    metadata:
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      labels:
+        chart: ifood-app
+        cluster-name: '{{ .name }}'
+        environment: sandbox
+        serviceName: rollouts-demo
+      name: rollouts-demo-{{ .name | sha256sum | trunc 5 }}
+    spec:
+      destination:
+        name: '{{ .name }}'
+        namespace: automation-test-01
+      ignoreDifferences:
+      - group: '*'
+        kind: '*'
+        managedFieldsManagers:
+        - rollouts-controller
+      - group: argoproj.io
+        jsonPointers:
+        - /spec/replicas
+        kind: Rollout
+      project: deployment
+      sources:
+      - ref: values
+        repoURL: https://github.dev/antonioazambuja/argocd-argo-rollouts.git
+        targetRevision: main
+      syncPolicy:
+        syncOptions:
+        - ApplyOutOfSyncOnly=false
+        - ServerSideApply=true
+status: {}
