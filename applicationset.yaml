@@ -20,6 +20,8 @@ spec:
     metadata:
       finalizers:
       - resources-finalizer.argocd.argoproj.io
+      annotations:
+        notifications.argoproj.io/subscribe.on-app-outofsync.awssqs: ""
       labels:
         chart: ifood-app
         cluster-name: '{{ .name }}'
